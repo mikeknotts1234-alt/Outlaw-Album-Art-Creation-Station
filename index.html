@@ -1,263 +1,492 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#121212">
-  <meta name="description" content="Track your 1,000 burpees during the December 2026 Burpee-Mas challenge.">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <title>31 Days of Burpee-Mas</title>
-  <link rel="manifest" href="./manifest.webmanifest">
-  <link rel="icon" href="./icon-192.png" type="image/png">
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Roboto:wght@400;500;700&display=swap');
-    :root{--bg-color:#121212;--card-bg:#1e1e1e;--red:#d32f2f;--red-dim:rgba(211,47,47,.15);--green:#2e7d32;--text-main:#f5f5f5;--text-muted:#9e9e9e;--border-color:#333}
-    *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-    body{font-family:Roboto,sans-serif;background:var(--bg-color);color:var(--text-main);padding:10px;padding-bottom:calc(40px + env(safe-area-inset-bottom))}
-    .container{max-width:480px;margin:0 auto}
-    .header{display:flex;justify-content:space-between;align-items:center;padding:10px 5px 20px;border-bottom:1px solid var(--border-color);margin-bottom:20px}
-    .header-title{font-family:Oswald,sans-serif;font-size:16px;letter-spacing:1px;text-transform:uppercase}
-    .header-status{font-size:12px;color:var(--text-muted);text-align:right}
-    .hero{background:linear-gradient(90deg,rgba(0,0,0,.88),rgba(0,0,0,.3)),url('https://images.unsplash.com/photo-1598971639058-fab3c3109a00?q=80&w=1000&auto=format&fit=crop') center/cover;border-radius:8px;padding:30px 20px;margin-bottom:20px;border:1px solid var(--border-color);position:relative;overflow:hidden}
-    .hero:before{content:'';position:absolute;inset:0;background:radial-gradient(circle,transparent 20%,#121212 120%)}
-    .hero-content{position:relative;z-index:1}
-    .hero-kicker{font-size:10px;color:#ff5252;letter-spacing:1px;margin-bottom:5px}
-    .hero h1{font-family:Oswald,sans-serif;font-size:38px;font-style:italic;color:var(--red);line-height:1.1;margin-bottom:10px;text-transform:uppercase;text-shadow:2px 2px 4px #000}
-    .hero p{font-size:14px;color:#ddd;max-width:85%;line-height:1.45}
-    .card{background:var(--card-bg);border:1px solid var(--border-color);border-radius:8px;padding:20px;margin-bottom:15px}
-    .card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:15px;gap:10px}
-    .card-title{font-family:Oswald,sans-serif;font-size:20px;text-transform:uppercase;letter-spacing:.5px}
-    .day-pill,.small-btn{font-size:12px;border:1px solid var(--border-color);padding:6px 9px;border-radius:4px;color:var(--text-main);background:#171717}
-    .stats-row{display:flex;justify-content:space-between;margin-bottom:15px}
-    .stat-group{display:flex;flex-direction:column}
-    .stat-label{font-size:12px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:5px}
-    .stat-value{font-family:Oswald,sans-serif;font-size:42px;line-height:1}
-    .text-green{color:var(--green)}.text-red{color:var(--red)}
-    .progress-header{display:flex;justify-content:space-between;font-size:12px;color:var(--text-muted);margin-bottom:5px;text-transform:uppercase}
-    .progress-track{height:12px;background:#000;border-radius:2px;width:100%;overflow:hidden;border:1px solid #333}
-    .progress-fill{height:100%;background:repeating-linear-gradient(-45deg,var(--red),var(--red) 10px,#b71c1c 10px,#b71c1c 20px);width:0%;transition:width .4s}
-    .pace-needed-flex{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border-color);padding-bottom:15px;margin-bottom:10px;gap:8px}
-    .pace-huge{font-family:Oswald,sans-serif;font-size:32px;color:var(--red)}
-    .pace-sub{font-size:13px;color:var(--text-muted);line-height:1.5}
-    .reps-input-group{background:#121212;border:1px solid var(--border-color);border-radius:6px;display:flex;justify-content:space-between;align-items:center;padding:10px;margin-bottom:15px}
-    .rep-btn{background:none;border:0;color:var(--text-main);font-size:24px;width:40px;height:40px;font-family:Oswald,sans-serif}
-    .rep-display{font-family:Oswald,sans-serif;font-size:36px}
-    .quick-reps{display:flex;gap:10px;margin-bottom:20px;align-items:center}
-    .quick-label{font-size:12px;color:var(--text-muted)}
-    .quick-chip{background:#121212;border:1px solid var(--border-color);color:var(--text-muted);padding:8px 0;flex:1;text-align:center;border-radius:4px;font-weight:bold}
-    .quick-chip.active{border-color:var(--red);color:var(--red);background:var(--red-dim)}
-    button{cursor:pointer}
-    button:disabled{opacity:.4;cursor:not-allowed}
-    .log-btn{background:var(--red);color:white;font-family:Oswald,sans-serif;font-size:20px;border:0;width:100%;padding:15px;border-radius:6px;text-transform:uppercase;letter-spacing:1px;display:flex;justify-content:center;align-items:center;gap:10px}
-    .log-btn:active{background:#b71c1c}
-    .log-count{text-align:center;font-size:13px;color:var(--text-muted);margin-top:15px}
-    .notice{background:#241818;border:1px solid #633030;color:#ffdada;border-radius:6px;padding:11px 12px;font-size:13px;line-height:1.45;margin-bottom:15px}
-    .pace-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
-    .pace-col{border-right:1px solid var(--border-color)}
-    .pace-col:last-child{border:0;padding-left:20px}
-    .pace-value{font-family:Oswald,sans-serif;font-size:30px;margin:5px 0}
-    .pace-unit{font-size:12px;color:var(--text-muted);font-family:Roboto,sans-serif;font-weight:normal}
-    .week-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;text-align:center;margin-top:15px}
-    .day-col{background:#121212;border:1px solid var(--border-color);border-radius:4px;padding:10px 0;display:flex;flex-direction:column;position:relative;min-width:0}
-    .day-name{font-size:10px;color:var(--text-muted)}
-    .day-date{font-size:12px;color:var(--text-muted);margin:3px 0 8px}
-    .day-reps{font-family:Oswald,sans-serif;font-size:16px;overflow-wrap:anywhere}
-    .day-col.active:after{content:'';position:absolute;bottom:-1px;left:10%;width:80%;height:3px;background:var(--red);border-radius:2px}
-    .footer{text-align:center;font-size:12px;color:var(--text-muted);margin-top:20px;text-transform:uppercase;letter-spacing:1px;line-height:1.6}
-    .footer button{margin-top:12px}
-    @media(max-width:360px){.hero h1{font-size:32px}.card{padding:15px}.pace-huge{font-size:27px}.quick-reps{gap:6px}.quick-label{font-size:10px}}
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Album Art Generator</title>
+    
+    <!-- Load Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Load custom fonts for the album art -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Montserrat:wght@400;700;900&family=Permanent+Marker&family=Righteous&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Custom scrollbar and base aesthetics */
+        body {
+            background-color: #111827;
+            color: #f3f4f6;
+            font-family: 'Montserrat', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        .glass-panel {
+            background: rgba(31, 41, 55, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Input styling overrides */
+        input[type="text"], textarea, select {
+            background: rgba(17, 24, 39, 0.8);
+            border: 1px solid rgba(75, 85, 99, 0.6);
+            color: white;
+            transition: all 0.3s ease;
+        }
+        input[type="text"]:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+        }
+        
+        /* Canvas container aspect ratio lock */
+        .canvas-container {
+            width: 100%;
+            max-width: 600px;
+            aspect-ratio: 1 / 1;
+            margin: 0 auto;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.3);
+        }
+        
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        /* Loading spinner */
+        .loader {
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top: 3px solid #fff;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
 </head>
-<body>
-<div class="container">
-  <header class="header">
-    <div class="header-title">🎄 31 Days of Burpee-Mas</div>
-    <div class="header-status" id="app-status">DECEMBER 2026<br>OFFLINE-READY</div>
-  </header>
+<body class="min-h-screen p-4 md:p-8">
 
-  <section class="hero">
-    <div class="hero-content">
-      <div class="hero-kicker">★ DECEMBER BURPEE CHALLENGE</div>
-      <h1>31 DAYS OF<br>BURPEE-MAS</h1>
-      <p>1,000 burpees. 31 days. No excuses. Sleigh the challenge!</p>
+    <div class="max-w-7xl mx-auto">
+        <!-- Header -->
+        <header class="text-center mb-8">
+            <h1 class="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500 mb-2 tracking-tight">Artifex</h1>
+            <p class="text-gray-400 text-sm md:text-base">AI & Gallery Album Art Generator</p>
+        </header>
+
+        <!-- Main Content Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            
+            <!-- Left Column: Controls (Order 2 on mobile, 1 on desktop) -->
+            <div class="lg:col-span-5 space-y-6 order-2 lg:order-1">
+                
+                <!-- Text Data Section -->
+                <div class="glass-panel p-6 rounded-2xl">
+                    <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                        Typography
+                    </h2>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm text-gray-400 mb-1">Band / Artist Name</label>
+                            <input type="text" id="band-name" placeholder="e.g. Mike Knotts & The State Line" class="w-full p-3 rounded-lg text-sm" oninput="drawCanvas()">
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-400 mb-1">Song / Album Name</label>
+                            <input type="text" id="song-name" placeholder="Enter song name..." class="w-full p-3 rounded-lg text-sm" oninput="drawCanvas()">
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm text-gray-400 mb-1">Font Style</label>
+                                <select id="font-select" class="w-full p-3 rounded-lg text-sm" onchange="drawCanvas()">
+                                    <option value="Montserrat">Modern (Montserrat)</option>
+                                    <option value="Cinzel">Classic (Cinzel)</option>
+                                    <option value="Permanent Marker">Grungy (Marker)</option>
+                                    <option value="Righteous">Retro (Righteous)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm text-gray-400 mb-1">Text Color</label>
+                                <div class="flex items-center gap-2 p-1 bg-gray-800 rounded-lg border border-gray-600 h-[46px]">
+                                    <input type="color" id="text-color" value="#ffffff" class="w-full h-full rounded cursor-pointer border-0 bg-transparent p-0 m-0" oninput="drawCanvas()">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Image Source Section (Tabs) -->
+                <div class="glass-panel p-6 rounded-2xl">
+                    <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                        Cover Art Source
+                    </h2>
+                    
+                    <!-- Tab Headers -->
+                    <div class="flex bg-gray-800 rounded-lg p-1 mb-4">
+                        <button id="tab-upload" class="flex-1 py-2 text-sm font-semibold rounded-md bg-gray-700 text-white shadow transition-all" onclick="switchTab('upload')">Gallery</button>
+                        <button id="tab-ai" class="flex-1 py-2 text-sm font-semibold rounded-md text-gray-400 hover:text-white transition-all" onclick="switchTab('ai')">AI Generator</button>
+                    </div>
+
+                    <!-- Upload Tab Content -->
+                    <div id="content-upload" class="block animate-fade-in">
+                        <label class="block text-sm text-gray-400 mb-2">Upload from Device</label>
+                        <div class="relative w-full h-32 border-2 border-dashed border-gray-600 rounded-lg hover:border-blue-400 transition-colors flex flex-col items-center justify-center cursor-pointer group bg-gray-800/50">
+                            <svg class="w-8 h-8 text-gray-400 group-hover:text-blue-400 mb-2 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                            <span class="text-sm text-gray-400 group-hover:text-blue-400 transition-colors">Tap to select photo</span>
+                            <!-- Hidden input, triggered by clicking the parent label/div -->
+                            <input type="file" id="image-upload" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" onchange="handleImageUpload(event)">
+                        </div>
+                    </div>
+
+                    <!-- AI Generator Tab Content -->
+                    <div id="content-ai" class="hidden animate-fade-in">
+                        <label class="block text-sm text-gray-400 mb-2">Describe your album cover</label>
+                        <textarea id="ai-prompt" rows="3" placeholder="e.g. A neon glowing skull in a dark desert, retro synthwave style..." class="w-full p-3 rounded-lg text-sm mb-3 resize-none"></textarea>
+                        
+                        <button id="generate-btn" class="w-full py-3 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white font-bold rounded-lg shadow-lg transform transition-all active:scale-95 flex justify-center items-center" onclick="generateAIImage()">
+                            <span id="generate-text">Generate AI Image</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Custom Message Box for Errors/Info -->
+                <div id="message-box" class="hidden p-4 rounded-lg bg-red-900/50 border border-red-500 text-red-200 text-sm">
+                    <!-- Message content goes here -->
+                </div>
+
+            </div>
+
+            <!-- Right Column: Preview & Download (Order 1 on mobile, 2 on desktop) -->
+            <div class="lg:col-span-7 flex flex-col items-center order-1 lg:order-2">
+                
+                <div class="w-full bg-gray-800/30 p-2 rounded-xl border border-gray-700 backdrop-blur-sm mb-6">
+                    <div class="flex justify-between items-center px-4 py-2 border-b border-gray-700/50 mb-4">
+                        <span class="text-sm font-semibold text-gray-300">Live Preview</span>
+                        <span class="text-xs text-gray-500">1080 x 1080px</span>
+                    </div>
+                    
+                    <!-- Canvas Container -->
+                    <div class="canvas-container relative bg-black">
+                        <!-- The high-res canvas (scaled down by CSS for view) -->
+                        <canvas id="art-canvas" width="1080" height="1080"></canvas>
+                        
+                        <!-- Overlay loading state specifically for the canvas -->
+                        <div id="canvas-overlay" class="absolute inset-0 bg-black/70 flex flex-col items-center justify-center hidden backdrop-blur-sm z-10">
+                            <div class="loader mb-3 w-10 h-10 border-4 border-t-purple-500"></div>
+                            <span class="text-purple-400 font-semibold tracking-wider">Dreaming up artwork...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <button id="download-btn" class="w-full max-w-md py-4 bg-white text-gray-900 hover:bg-gray-200 font-bold rounded-xl shadow-[0_0_15px_rgba(255,255,255,0.2)] transform transition-all active:scale-95 flex justify-center items-center gap-2" onclick="downloadArt()">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                    Download Masterpiece
+                </button>
+                
+            </div>
+        </div>
     </div>
-  </section>
 
-  <div id="date-notice" class="notice" hidden></div>
+    <!-- Application Logic -->
+    <script>
+        // --- State and Constants ---
+        const canvas = document.getElementById('art-canvas');
+        const ctx = canvas.getContext('2d');
+        const CANVAS_SIZE = 1080;
+        let baseImage = null; // Stores the HTMLImageElement of the background
+        
+        // Use Gemini 3.1 Flash Image model for generating album art (as per guidelines for high fidelity images)
+        const GEMINI_API_KEY = ""; // Provided automatically by the runtime environment
+        const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-image:generateContent?key=${GEMINI_API_KEY}`;
 
-  <section class="card">
-    <div class="card-header">
-      <div class="card-title">🎯 MISSION PROGRESS</div>
-      <div class="day-pill">DAY <span id="ui-day">00</span> / 31</div>
-    </div>
-    <div class="stats-row">
-      <div class="stat-group"><div class="stat-label">Burpees Done</div><div class="stat-value text-green" id="ui-done">0</div></div>
-      <div class="stat-group" style="text-align:right"><div class="stat-label">Burpees Left</div><div class="stat-value" id="ui-left">1,000</div></div>
-    </div>
-    <div class="progress-header"><span>Goal Completion</span><span id="ui-percent" class="text-red">0%</span></div>
-    <div class="progress-track"><div class="progress-fill" id="ui-progress"></div></div>
-  </section>
+        // Wait for fonts to load before initial draw to prevent flash of unstyled text
+        document.fonts.ready.then(() => {
+            drawCanvas();
+        });
 
-  <section class="card">
-    <div class="pace-needed-flex">
-      <div class="card-title">DAILY PACE NEEDED</div>
-      <div><span class="pace-huge" id="ui-req-pace">32.3</span> <span style="font-size:13px;color:var(--text-muted)">reps/day</span></div>
-    </div>
-    <div class="pace-sub" id="ui-pace-desc">1,000 reps ÷ 31 days including today.</div>
-  </section>
+        // --- UI Interactions ---
 
-  <section class="card">
-    <div class="card-header"><div class="card-title"><span style="color:var(--red)">+</span> LOG A SET</div></div>
-    <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px;text-transform:uppercase">Reps in this set</div>
-    <div class="reps-input-group">
-      <button class="rep-btn" id="minus-btn" aria-label="Decrease reps">−</button>
-      <div class="rep-display" id="current-reps">22</div>
-      <button class="rep-btn" id="plus-btn" aria-label="Increase reps">+</button>
-    </div>
-    <div class="quick-reps">
-      <div class="quick-label">Quick:</div>
-      <button class="quick-chip" data-reps="10">10</button>
-      <button class="quick-chip active" data-reps="22">22</button>
-      <button class="quick-chip" data-reps="25">25</button>
-      <button class="quick-chip" data-reps="50">50</button>
-    </div>
-    <button class="log-btn" id="log-btn">🎅 LOG SET ↗</button>
-    <div class="log-count"><span id="ui-today-sets">0</span> sets logged today</div>
-  </section>
+        function switchTab(tabId) {
+            const upTab = document.getElementById('tab-upload');
+            const aiTab = document.getElementById('tab-ai');
+            const upContent = document.getElementById('content-upload');
+            const aiContent = document.getElementById('content-ai');
 
-  <section class="card">
-    <div class="card-title" style="margin-bottom:15px">📈 YOUR CURRENT PACE</div>
-    <div class="pace-grid">
-      <div class="pace-col"><div class="stat-label">Daily Average</div><div class="pace-value text-green"><span id="ui-avg">0</span> <span class="pace-unit">reps/day</span></div></div>
-      <div class="pace-col"><div class="stat-label">Projected December</div><div class="pace-value text-red"><span id="ui-proj">0</span> <span class="pace-unit">reps</span></div></div>
-    </div>
-    <div class="pace-sub" style="margin-top:15px">Total ÷ elapsed challenge days. Projection assumes you maintain this daily average.</div>
-  </section>
+            if (tabId === 'upload') {
+                upTab.className = "flex-1 py-2 text-sm font-semibold rounded-md bg-gray-700 text-white shadow transition-all";
+                aiTab.className = "flex-1 py-2 text-sm font-semibold rounded-md text-gray-400 hover:text-white transition-all";
+                upContent.classList.remove('hidden');
+                aiContent.classList.add('hidden');
+            } else {
+                aiTab.className = "flex-1 py-2 text-sm font-semibold rounded-md bg-gray-700 text-white shadow transition-all";
+                upTab.className = "flex-1 py-2 text-sm font-semibold rounded-md text-gray-400 hover:text-white transition-all";
+                aiContent.classList.remove('hidden');
+                upContent.classList.add('hidden');
+            }
+        }
 
-  <section class="card">
-    <div class="card-title">📅 DAILY ACTIVITY</div>
-    <div style="font-size:12px;color:var(--text-muted);margin-top:5px;text-transform:uppercase">Recent 7 Days</div>
-    <div class="week-grid" id="ui-week-grid"></div>
-  </section>
+        function showMessage(msg, isError = false) {
+            const msgBox = document.getElementById('message-box');
+            msgBox.textContent = msg;
+            msgBox.className = `p-4 rounded-lg text-sm mb-4 ${isError ? 'bg-red-900/50 border border-red-500 text-red-200' : 'bg-blue-900/50 border border-blue-500 text-blue-200'}`;
+            msgBox.classList.remove('hidden');
+            
+            // Auto hide after 5 seconds
+            setTimeout(() => {
+                msgBox.classList.add('hidden');
+            }, 5000);
+        }
 
-  <footer class="footer">
-    🎄 31 Days of Burpee-Mas | December 2026
-    <br><button class="small-btn" id="reset-btn">Reset all challenge data</button>
-    <div style="margin-top:8px">Your log is saved on this device and browser.</div>
-  </footer>
-</div>
+        // --- File Upload Logic ---
 
-<script>
-(() => {
-  'use strict';
-  const TARGET = 1000;
-  const TOTAL_DAYS = 31;
-  const START = '2026-12-01';
-  const END = '2026-12-31';
-  const STORAGE_KEY = 'burpeemas_v3';
-  let currentReps = 22;
-  let logs = [];
-  try {
-    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-    logs = Array.isArray(saved) ? saved.filter(x => x && typeof x.count === 'number' && typeof x.dateString === 'string') : [];
-  } catch (_) { logs = []; }
+        function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
 
-  const $ = id => document.getElementById(id);
-  const dateKey = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-  const startDate = new Date(2026, 11, 1);
-  const endDate = new Date(2026, 11, 31, 23, 59, 59);
-  const today = new Date();
-  const todayStr = dateKey(today);
-  const inChallenge = todayStr >= START && todayStr <= END;
-  const beforeChallenge = todayStr < START;
-  const dayNumber = beforeChallenge ? 0 : (todayStr > END ? 31 : today.getDate());
-  const elapsedDays = Math.max(1, Math.min(TOTAL_DAYS, dayNumber || 1));
-  const daysRemaining = beforeChallenge ? 31 : Math.max(1, TOTAL_DAYS - dayNumber + 1);
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    baseImage = img;
+                    drawCanvas();
+                }
+                img.src = e.target.result;
+            }
+            reader.readAsDataURL(file);
+        }
 
-  function save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(logs)); }
-  function setReps(n) {
-    currentReps = Math.max(1, Math.min(500, n));
-    $('current-reps').textContent = currentReps;
-    document.querySelectorAll('.quick-chip').forEach(chip => chip.classList.toggle('active', Number(chip.dataset.reps) === currentReps));
-  }
-  function logSet() {
-    if (!inChallenge) return;
-    logs.push({timestamp:Date.now(), count:currentReps, dateString:todayStr});
-    save();
-    render();
-  }
-  function renderWeek() {
-    const grid = $('ui-week-grid');
-    grid.innerHTML = '';
-    const names = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
-    for (let i=6; i>=0; i--) {
-      const d = new Date(today);
-      d.setDate(today.getDate()-i);
-      const key = dateKey(d);
-      const reps = logs.filter(x => x.dateString === key).reduce((s,x) => s+x.count, 0);
-      const col = document.createElement('div');
-      col.className = 'day-col' + (i===0 ? ' active' : '');
-      col.innerHTML = `<div class="day-name">${names[d.getDay()]}</div><div class="day-date">${String(d.getDate()).padStart(2,'0')}</div><div class="day-reps">${reps.toLocaleString()}</div>`;
-      grid.appendChild(col);
-    }
-  }
-  function render() {
-    const totalDone = logs.reduce((s,x) => s+x.count, 0);
-    const totalLeft = Math.max(0, TARGET-totalDone);
-    const percent = Math.min(100, totalDone/TARGET*100);
-    const todayLogs = logs.filter(x => x.dateString === todayStr);
-    const elapsedForAverage = beforeChallenge ? 1 : elapsedDays;
-    const avg = totalDone / elapsedForAverage;
-    $('ui-day').textContent = String(dayNumber).padStart(2,'0');
-    $('ui-done').textContent = totalDone.toLocaleString();
-    $('ui-left').textContent = totalLeft.toLocaleString();
-    $('ui-percent').textContent = Math.floor(percent)+'%';
-    $('ui-progress').style.width = percent+'%';
-    $('ui-req-pace').textContent = (totalLeft/daysRemaining).toFixed(1);
-    const base = Math.floor(totalLeft/daysRemaining);
-    const remainder = totalLeft % daysRemaining;
-    $('ui-pace-desc').textContent = `${totalLeft.toLocaleString()} reps ÷ ${daysRemaining} days remaining including today. Whole-rep split: ${base} on ${daysRemaining-remainder} days, ${base+1} on ${remainder} days.`;
-    $('ui-today-sets').textContent = todayLogs.length;
-    $('ui-avg').textContent = Math.round(avg).toLocaleString();
-    $('ui-proj').textContent = Math.round(avg*TOTAL_DAYS).toLocaleString();
+        // --- AI Generation Logic (Gemini API) ---
 
-    const notice = $('date-notice');
-    if (beforeChallenge) {
-      notice.hidden = false;
-      notice.textContent = '🎅 The challenge starts December 1, 2026. You can open the app now, but logging is locked until December 1.';
-    } else if (!inChallenge) {
-      notice.hidden = false;
-      notice.textContent = '🎄 The December 2026 challenge has ended. Your results are still available; logging is closed.';
-    } else {
-      notice.hidden = true;
-    }
-    $('log-btn').disabled = !inChallenge;
-    $('minus-btn').disabled = !inChallenge;
-    $('plus-btn').disabled = !inChallenge;
-    document.querySelectorAll('.quick-chip').forEach(b => b.disabled = !inChallenge);
-    $('app-status').innerHTML = inChallenge ? 'CHALLENGE LIVE<br>DAY '+String(dayNumber).padStart(2,'0') : (beforeChallenge ? 'STARTS DEC 1<br>2026' : 'CHALLENGE COMPLETE');
-    renderWeek();
-  }
+        async function generateAIImage() {
+            const prompt = document.getElementById('ai-prompt').value.trim();
+            if (!prompt) {
+                showMessage("Please enter a description for the AI.", true);
+                return;
+            }
 
-  $('minus-btn').addEventListener('click', () => setReps(currentReps-1));
-  $('plus-btn').addEventListener('click', () => setReps(currentReps+1));
-  document.querySelectorAll('.quick-chip').forEach(b => b.addEventListener('click', () => setReps(Number(b.dataset.reps))));
-  $('log-btn').addEventListener('click', logSet);
-  $('reset-btn').addEventListener('click', () => {
-    if (confirm('Delete ALL Burpee-Mas logs on this device? This cannot be undone.')) {
-      logs = [];
-      save();
-      render();
-    }
-  });
-  render();
+            // Update UI for loading state
+            const btn = document.getElementById('generate-btn');
+            const btnText = document.getElementById('generate-text');
+            const overlay = document.getElementById('canvas-overlay');
+            
+            btn.disabled = true;
+            btnText.innerHTML = '<span class="loader"></span> Generating...';
+            overlay.classList.remove('hidden');
 
-  if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
-    window.addEventListener('load', () => navigator.serviceWorker.register('./service-worker.js').catch(err => console.warn('Service worker registration failed:', err)));
-  }
-})();
-</script>
+            const payload = {
+                contents: [{
+                    role: 'user',
+                    parts: [{ text: `Generate high quality, stylized album cover art without any text on the image. Subject: ${prompt}. Cinematic lighting, highly detailed, visually striking.` }]
+                }],
+                generationConfig: {
+                    responseModalities: ['IMAGE'],
+                    imageConfig: { aspectRatio: "1:1" }
+                }
+            };
+
+            try {
+                // Implementation includes exponential backoff retry logic as recommended
+                let response = null;
+                let retries = 0;
+                let maxRetries = 3;
+                let delay = 1000;
+
+                while (retries < maxRetries) {
+                    response = await fetch(GEMINI_API_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (response.ok) break;
+                    if (response.status === 429) {
+                        retries++;
+                        await new Promise(r => setTimeout(r, delay));
+                        delay *= 2;
+                    } else {
+                        throw new Error(`API Error: ${response.status}`);
+                    }
+                }
+
+                if (!response || !response.ok) {
+                    throw new Error("Failed to generate image after retries.");
+                }
+
+                const result = await response.json();
+                const part = result?.candidates?.[0]?.content?.parts?.find(p => p.inlineData);
+                
+                if (part && part.inlineData) {
+                    const imageUrl = `data:${part.inlineData.mimeType};base64,${part.inlineData.data}`;
+                    
+                    const img = new Image();
+                    img.onload = function() {
+                        baseImage = img;
+                        drawCanvas();
+                    }
+                    img.src = imageUrl;
+                    showMessage("Image generated successfully!");
+                } else {
+                    throw new Error("Invalid response format from AI.");
+                }
+
+            } catch (error) {
+                showMessage(error.message || "Failed to generate image. Please try again.", true);
+            } finally {
+                // Restore UI
+                btn.disabled = false;
+                btnText.innerHTML = 'Generate AI Image';
+                overlay.classList.add('hidden');
+            }
+        }
+
+        // --- Canvas Drawing Logic ---
+
+        function drawCanvas() {
+            // 1. Clear background
+            ctx.fillStyle = '#0f172a'; // dark slate
+            ctx.fillRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
+
+            // 2. Draw Base Image if exists (Center crop to 1:1 aspect ratio)
+            if (baseImage) {
+                const scale = Math.max(CANVAS_SIZE / baseImage.width, CANVAS_SIZE / baseImage.height);
+                const drawWidth = baseImage.width * scale;
+                const drawHeight = baseImage.height * scale;
+                const x = (CANVAS_SIZE - drawWidth) / 2;
+                const y = (CANVAS_SIZE - drawHeight) / 2;
+                
+                ctx.drawImage(baseImage, x, y, drawWidth, drawHeight);
+                
+                // Add a subtle gradient overlay to ensure text is readable
+                const gradient = ctx.createLinearGradient(0, 0, 0, CANVAS_SIZE);
+                gradient.addColorStop(0, 'rgba(0,0,0,0.4)');
+                gradient.addColorStop(0.3, 'rgba(0,0,0,0)');
+                gradient.addColorStop(0.7, 'rgba(0,0,0,0)');
+                gradient.addColorStop(1, 'rgba(0,0,0,0.6)');
+                ctx.fillStyle = gradient;
+                ctx.fillRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
+            } else {
+                // Default placeholder graphics if no image
+                const grad = ctx.createLinearGradient(0, 0, CANVAS_SIZE, CANVAS_SIZE);
+                grad.addColorStop(0, '#312e81'); // indigo-900
+                grad.addColorStop(1, '#831843'); // pink-900
+                ctx.fillStyle = grad;
+                ctx.fillRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
+                
+                ctx.fillStyle = 'rgba(255,255,255,0.05)';
+                ctx.beginPath();
+                ctx.arc(CANVAS_SIZE/2, CANVAS_SIZE/2, 400, 0, Math.PI*2);
+                ctx.fill();
+            }
+
+            // 3. Draw Typography
+            const bandName = document.getElementById('band-name').value;
+            const songName = document.getElementById('song-name').value;
+            const fontFamily = document.getElementById('font-select').value;
+            const textColor = document.getElementById('text-color').value;
+
+            ctx.fillStyle = textColor;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            
+            // Text Shadow for readability against busy backgrounds
+            ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
+            ctx.shadowBlur = 15;
+            ctx.shadowOffsetX = 2;
+            ctx.shadowOffsetY = 4;
+
+            // Draw Band Name (Top area)
+            if (bandName) {
+                // Adjust font size based on string length to roughly fit
+                let bandSize = 60;
+                if (bandName.length > 20) bandSize = 45;
+                if (bandName.length > 30) bandSize = 35;
+                
+                ctx.font = `${fontFamily === 'Montserrat' ? '900' : 'bold'} ${bandSize}px '${fontFamily}'`;
+                ctx.fillText(bandName.toUpperCase(), CANVAS_SIZE / 2, 120);
+                
+                // Optional: Draw a thin line under band name
+                ctx.shadowBlur = 0; // turn off shadow for line
+                ctx.strokeStyle = textColor;
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(CANVAS_SIZE/2 - 100, 160);
+                ctx.lineTo(CANVAS_SIZE/2 + 100, 160);
+                ctx.stroke();
+                // restore shadow
+                ctx.shadowBlur = 15; 
+            }
+
+            // Draw Song Name (Bottom area)
+            if (songName) {
+                let songSize = 130;
+                if (songName.length > 10) songSize = 100;
+                if (songName.length > 15) songSize = 80;
+                if (songName.length > 25) songSize = 60;
+
+                ctx.font = `${fontFamily === 'Montserrat' ? '700' : 'bold'} ${songSize}px '${fontFamily}'`;
+                
+                // Word wrap logic for song title if it's too long
+                if (songName.length > 15 && songName.includes(' ')) {
+                    const words = songName.split(' ');
+                    const half = Math.ceil(words.length / 2);
+                    const line1 = words.slice(0, half).join(' ');
+                    const line2 = words.slice(half).join(' ');
+                    
+                    ctx.fillText(line1, CANVAS_SIZE / 2, CANVAS_SIZE - 220);
+                    ctx.fillText(line2, CANVAS_SIZE / 2, CANVAS_SIZE - 120);
+                } else {
+                    ctx.fillText(songName, CANVAS_SIZE / 2, CANVAS_SIZE - 150);
+                }
+            }
+
+            // Reset shadow to not affect next frame
+            ctx.shadowBlur = 0;
+            ctx.shadowOffsetX = 0;
+            ctx.shadowOffsetY = 0;
+        }
+
+        // --- Export / Download ---
+        
+        function downloadArt() {
+            // Get data URL from canvas
+            const dataURL = canvas.toDataURL('image/png');
+            
+            // Create a temporary link element
+            const link = document.createElement('a');
+            
+            // Format filename
+            let band = document.getElementById('band-name').value.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+            let song = document.getElementById('song-name').value.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+            let filename = 'album_art';
+            if (band || song) {
+                filename = `${band ? band : 'unknown'}_${song ? song : 'untitled'}_cover.png`;
+            } else {
+                filename += '.png';
+            }
+
+            link.download = filename;
+            link.href = dataURL;
+            
+            // Trigger download
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    </script>
 </body>
 </html>
